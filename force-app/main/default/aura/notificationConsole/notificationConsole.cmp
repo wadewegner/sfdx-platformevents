@@ -1,0 +1,44 @@
+<aura:component implements="flexipage:availableForAllPageTypes" access="global">
+
+  <aura:attribute name="notifications" type="Object[]"/>
+  <aura:attribute name="isMuted" type="Boolean" default="false"/>
+
+  <aura:handler name="init" value="{!this}" action="{!c.onInit}"/>
+
+  <aura:registerEvent name="toastEvent" type="force:showToast"/>
+
+
+  <div class="container">
+
+    <!-- Header -->
+    <div class="slds-p-around--x-small slds-border--bottom slds-theme--shade">
+      <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center">
+        <div>
+          <span class="slds-badge">{!v.notifications.length}</span>
+        </div>
+        <div>
+          <lightning:buttonIcon onclick="{!c.onClear}" iconName="utility:delete" title="Clear notifications"
+            alternativeText="Clear notifications" variant="border-filled"/>
+          <lightning:buttonIcon onclick="{!c.onToggleMute}"
+            iconName="{!v.isMuted ? 'utility:volume_off' : 'utility:volume_high'}"
+            title="{!v.isMuted ? 'Unmute notifications' : 'Mute notifications'}"
+            alternativeText="Toggle mute" variant="border-filled"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification list -->
+    <div class="slds-container--fluid slds-scrollable--y content">
+      <aura:iteration items="{!v.notifications}" var="notification">
+        <div class="slds-p-around--small slds-border--top">
+          <div class="slds-grid slds-grid--align-spread slds-has-flexi-truncate">
+            <p>{!notification.message}</p>
+            <p class="slds-text-color--weak slds-p-left--x-small">{!notification.time}</p>
+          </div>
+        </div>
+      </aura:iteration>
+    </div>
+
+  </div>
+
+</aura:component>

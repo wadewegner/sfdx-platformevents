@@ -1,0 +1,6 @@
+.THIS.container {
+  height:100%;
+}
+.THIS .content {
+  height:calc(100% - 49px);
+}
