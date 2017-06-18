@@ -1,21 +1,42 @@
 ({
-  onInit : function(component, event, helper) {
-    component.set('v.notifications', [
-      {time: '00:01', message: 'Greetings Trailblazer!'},
-      {time: '00:02', message: 'Congratulations on building this first version of the app.'},
-      {time: '00:03', message: 'Beware of the bears.'}
-    ]);
+    onCometdLoaded: function (component, event, helper) {
+        var cometd = new org.cometd.CometD();
+        component.set('v.cometd', cometd);
+        if (component.get('v.sessionId') != null)
+            helper.connectCometd(component);
+    },
+    
+    onInit: function (component, event, helper) {
+        component.set('v.cometdSubscriptions', []);
+        component.set('v.notifications', []);
 
-    helper.displayToast(component, 'success', 'Ready to receive notifications.');
-  },
+        // Disconnect CometD when leaving page
+        window.addEventListener('unload', function (event) {
+            helper.disconnectCometd(component);
+        });
 
-  onClear : function(component, event, helper) {
-    component.set('v.notifications', []);
+        // Retrieve session id
+        var action = component.get('c.getSessionId');
+        action.setCallback(this, function (response) {
+            if (component.isValid() && response.getState() === 'SUCCESS') {
+                component.set('v.sessionId', response.getReturnValue());
+                if (component.get('v.cometd') != null)
+                    helper.connectCometd(component);
+            } else
+                console.error(response);
+        });
+        $A.enqueueAction(action);
+
+        helper.displayToast(component, 'success', 'Ready to receive notifications.');
     },
 
-  onToggleMute : function(component, event, helper) {
-    var isMuted = component.get('v.isMuted');
-    component.set('v.isMuted', !isMuted);
-    helper.displayToast(component, 'success', 'Notifications '+ ((!isMuted) ? 'muted' : 'unmuted') +'.');
+    onClear: function (component, event, helper) {
+        component.set('v.notifications', []);
+    },
+
+    onToggleMute: function (component, event, helper) {
+        var isMuted = component.get('v.isMuted');
+        component.set('v.isMuted', !isMuted);
+        helper.displayToast(component, 'success', 'Notifications ' + ((!isMuted) ? 'muted' : 'unmuted') + '.');
     }
 })

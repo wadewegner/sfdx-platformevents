@@ -1,4 +1,10 @@
-<aura:component implements="flexipage:availableForAllPageTypes" access="global">
+<aura:component controller="NotificationController" implements="flexipage:availableForAllPageTypes" access="global">
+
+  <ltng:require scripts="{!$Resource.cometd}" afterScriptsLoaded="{!c.onCometdLoaded}"/>
+
+  <aura:attribute name="sessionId" type="String"/>
+  <aura:attribute name="cometd" type="Object"/>
+  <aura:attribute name="cometdSubscriptions" type="Object[]"/>
 
   <aura:attribute name="notifications" type="Object[]"/>
   <aura:attribute name="isMuted" type="Boolean" default="false"/>
